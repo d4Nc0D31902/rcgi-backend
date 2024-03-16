@@ -8,6 +8,7 @@ const {
   getSingleModule,
   updateModule,
   deleteModule,
+  addChapter,
 } = require("../controllers/moduleController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -23,13 +24,20 @@ router
     updateModule
   )
   .delete(isAuthenticatedUser, authorizeRoles("admin"), deleteModule);
-  
+
 router.post(
   "/admin/module/new",
   isAuthenticatedUser,
   authorizeRoles("admin"),
   upload.array("images", 10),
   newModule
+);
+
+router.post(
+  "/admin/module/:moduleId/chapter/new",
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  addChapter
 );
 
 module.exports = router;

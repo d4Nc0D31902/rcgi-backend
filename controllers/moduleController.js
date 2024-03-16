@@ -1,4 +1,5 @@
 const Module = require("../models/module");
+const Chapter = require("../models/chapter");
 const ErrorHandler = require("../utils/errorHandler");
 const cloudinary = require("cloudinary");
 
@@ -31,14 +32,46 @@ exports.newModule = async (req, res, next) => {
   });
 };
 
+// exports.getSingleModule = async (req, res, next) => {
+//   const module = await Module.findById(req.params.id);
+//   if (!module) {
+//     return next(new ErrorHandler("Module not found", 404));
+//   }
+//   res.status(200).json({
+//     success: true,
+//     module,
+//   });
+// };
+
 exports.getSingleModule = async (req, res, next) => {
-  const module = await Module.findById(req.params.id);
+  try {
+    const module = await Module.findById(req.params.id).populate("chapters");
+    if (!module) {
+      return next(new ErrorHandler("Module not found", 404));
+    }
+    res.status(200).json({
+      success: true,
+      module,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.addChapter = async (req, res, next) => {
+  const module = await Module.findById(req.params.moduleId);
   if (!module) {
     return next(new ErrorHandler("Module not found", 404));
   }
-  res.status(200).json({
+
+  const chapter = await Chapter.create(req.body);
+
+  module.chapters.push(chapter._id);
+  await module.save();
+
+  res.status(201).json({
     success: true,
-    module,
+    chapter,
   });
 };
 
