@@ -8,6 +8,7 @@ const order = require('./routes/order');
 const course = require('./routes/course');
 const modules = require('./routes/module');
 const chapter = require('./routes/chapter');
+const lesson = require('./routes/lesson');
 const errorMiddleware = require('./middlewares/errors');
 app.use(express.json({ limit: '100mb' }));
 // app.set("trust proxy", 1);
@@ -23,6 +24,7 @@ app.use('/api/v1', order);
 app.use('/api/v1', course);
 app.use('/api/v1', modules);
 app.use('/api/v1', chapter);
+app.use('/api/v1', lesson);
 
 app.use(errorMiddleware);
 module.exports = app

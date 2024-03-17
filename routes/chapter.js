@@ -7,6 +7,7 @@ const {
   getSingleChapter,
   updateChapter,
   deleteChapter,
+  addLesson, 
 } = require("../controllers/chapterController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -27,6 +28,13 @@ router.post(
   isAuthenticatedUser,
   authorizeRoles("admin"),
   newChapter
+);
+
+router.post(
+  "/admin/chapter/:chapterId/lesson/new", 
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  addLesson
 );
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const Chapter = require("../models/chapter");
+const Lesson = require("../models/lesson");
 const ErrorHandler = require("../utils/errorHandler");
 
 exports.newChapter = async (req, res, next) => {
@@ -13,9 +14,24 @@ exports.newChapter = async (req, res, next) => {
   }
 };
 
+// exports.getSingleChapter = async (req, res, next) => {
+//   try {
+//     const chapter = await Chapter.findById(req.params.id);
+//     if (!chapter) {
+//       return next(new ErrorHandler("Chapter not found", 404));
+//     }
+//     res.status(200).json({
+//       success: true,
+//       chapter,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 exports.getSingleChapter = async (req, res, next) => {
   try {
-    const chapter = await Chapter.findById(req.params.id);
+    const chapter = await Chapter.findById(req.params.id).populate("lessons");
     if (!chapter) {
       return next(new ErrorHandler("Chapter not found", 404));
     }
@@ -70,6 +86,27 @@ exports.getChapters = async (req, res, next) => {
     res.status(200).json({
       success: true,
       chapters,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.addLesson = async (req, res, next) => {
+  try {
+    const chapter = await Chapter.findById(req.params.chapterId);
+    if (!chapter) {
+      return next(new ErrorHandler("Chapter not found", 404));
+    }
+
+    const lesson = await Lesson.create(req.body);
+
+    chapter.lessons.push(lesson._id);
+    await chapter.save();
+
+    res.status(201).json({
+      success: true,
+      lesson,
     });
   } catch (error) {
     next(error);
