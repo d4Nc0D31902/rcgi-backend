@@ -47,11 +47,13 @@ exports.getSingleModule = async (req, res, next) => {
   try {
     const module = await Module.findById(req.params.id).populate({
       path: "chapters",
-      populate: { path: "lessons" }, 
+      populate: { path: "lessons quizzes" }, 
     });
+
     if (!module) {
       return next(new ErrorHandler("Module not found", 404));
     }
+
     res.status(200).json({
       success: true,
       module,

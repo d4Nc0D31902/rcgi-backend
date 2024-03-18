@@ -16,6 +16,12 @@ const chapterSchema = new mongoose.Schema(
         ref: "Lesson",
       },
     ],
+    quizzes: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Quiz",
+      },
+    ],
   },
   {
     timestamps: true,

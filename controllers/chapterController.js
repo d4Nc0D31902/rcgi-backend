@@ -1,4 +1,5 @@
 const Chapter = require("../models/chapter");
+const Quiz = require("../models/quiz");
 const Lesson = require("../models/lesson");
 const ErrorHandler = require("../utils/errorHandler");
 
@@ -107,6 +108,27 @@ exports.addLesson = async (req, res, next) => {
     res.status(201).json({
       success: true,
       lesson,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.addQuiz = async (req, res, next) => {
+  try {
+    const chapter = await Chapter.findById(req.params.chapterId);
+    if (!chapter) {
+      return next(new ErrorHandler("Chapter not found", 404));
+    }
+
+    const quiz = await Quiz.create(req.body);
+
+    chapter.quizzes.push(quiz._id);
+    await chapter.save();
+
+    res.status(201).json({
+      success: true,
+      quiz,
     });
   } catch (error) {
     next(error);
