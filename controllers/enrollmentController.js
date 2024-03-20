@@ -15,6 +15,31 @@ exports.newEnrollment = async (req, res, next) => {
   }
 };
 
+exports.joinEnrollment = async (req, res, next) => {
+  try {
+    const { userId, courseId } = req.body;
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(new ErrorHandler("User not found", 404));
+    }
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return next(new ErrorHandler("Course not found", 404));
+    }
+    const enrollment = await Enrollment.create({
+      user: userId,
+      course: courseId,
+    });
+
+    res.status(201).json({
+      success: true,
+      enrollment,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.getSingleEnrollment = async (req, res, next) => {
   try {
     const enrollment = await Enrollment.findById(req.params.id)
@@ -35,8 +60,8 @@ exports.getSingleEnrollment = async (req, res, next) => {
 exports.myEnrollments = async (req, res, next) => {
   try {
     const enrollments = await Enrollment.find({ user: req.user._id })
-      .populate("user", "name") 
-      .populate("course", "title"); 
+      .populate("user", "name")
+      .populate("course", "title");
 
     res.status(200).json({
       success: true,

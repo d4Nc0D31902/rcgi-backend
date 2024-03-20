@@ -8,11 +8,12 @@ const {
   updateEnrollment,
   deleteEnrollment,
   myEnrollments,
+  joinEnrollment, // Import the joinEnrollment function
 } = require("../controllers/enrollmentController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 
-router.get('/enrollment/me', isAuthenticatedUser, myEnrollments);
+router.get("/enrollment/me", isAuthenticatedUser, myEnrollments);
 
 router.get(
   "/admin/enrollments",
@@ -25,11 +26,8 @@ router
   .route("/admin/enrollment/:id")
   .put(isAuthenticatedUser, authorizeRoles("admin"), updateEnrollment)
   .delete(isAuthenticatedUser, authorizeRoles("admin"), deleteEnrollment);
-router.post(
-  "/admin/enrollment/new",
-  isAuthenticatedUser,
-  authorizeRoles("admin"),
-  newEnrollment
-);
+router.post("/enrollment/new", isAuthenticatedUser, newEnrollment);
+
+router.post("/enrollment/join", isAuthenticatedUser, joinEnrollment);
 
 module.exports = router;
