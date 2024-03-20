@@ -39,6 +39,9 @@ const userSchema = new mongoose.Schema({
   company: {
     type: String,
   },
+  employee_id: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
