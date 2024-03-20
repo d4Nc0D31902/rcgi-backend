@@ -3,6 +3,14 @@ const Course = require("../models/course");
 const User = require("../models/user");
 const ErrorHandler = require("../utils/errorHandler");
 
+const checkUser = async (userId, courseId) => {
+  const enrollment = await Enrollment.findOne({
+    user: userId,
+    course: courseId,
+  });
+  return enrollment ? true : false;
+};
+
 exports.newEnrollment = async (req, res, next) => {
   try {
     const enrollment = await Enrollment.create(req.body);
@@ -26,6 +34,13 @@ exports.joinEnrollment = async (req, res, next) => {
     if (!course) {
       return next(new ErrorHandler("Course not found", 404));
     }
+    const isEnrolled = await checkUser(userId, courseId);
+    if (isEnrolled) {
+      return next(
+        new ErrorHandler("User is already enrolled in this course", 400)
+      );
+    }
+
     const enrollment = await Enrollment.create({
       user: userId,
       course: courseId,
@@ -117,27 +132,6 @@ exports.getEnrollments = async (req, res, next) => {
     res.status(200).json({
       success: true,
       enrollments,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-exports.addLesson = async (req, res, next) => {
-  try {
-    const enrollment = await Enrollment.findById(req.params.enrollmentId);
-    if (!enrollment) {
-      return next(new ErrorHandler("Enrollment not found", 404));
-    }
-
-    const lesson = await Lesson.create(req.body);
-
-    enrollment.lessons.push(lesson._id);
-    await enrollment.save();
-
-    res.status(201).json({
-      success: true,
-      lesson,
     });
   } catch (error) {
     next(error);

@@ -8,7 +8,7 @@ const {
   updateEnrollment,
   deleteEnrollment,
   myEnrollments,
-  joinEnrollment, // Import the joinEnrollment function
+  joinEnrollment, 
 } = require("../controllers/enrollmentController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
