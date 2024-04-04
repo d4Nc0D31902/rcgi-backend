@@ -15,6 +15,25 @@ exports.newChapter = async (req, res, next) => {
   }
 };
 
+exports.markAsDone = async (req, res, next) => {
+  try {
+    const chapter = await Chapter.findById(req.params.id);
+    if (!chapter) {
+      return next(new ErrorHandler("Chapter not found", 404));
+    }
+
+    chapter.status = "Done";
+    await chapter.save();
+
+    res.status(200).json({
+      success: true,
+      chapter,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // exports.getSingleChapter = async (req, res, next) => {
 //   try {
 //     const chapter = await Chapter.findById(req.params.id);

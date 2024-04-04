@@ -8,7 +8,14 @@ const {
   updateEnrollment,
   deleteEnrollment,
   myEnrollments,
-  joinEnrollment, 
+  joinEnrollment,
+  getSingleModule,
+  getSingleChapter,
+  getSingleLesson,
+  getSingleQuiz,
+  markChapterAsDone,
+  markLessonAsDone,
+  markQuizAsDone,
 } = require("../controllers/enrollmentController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -22,6 +29,19 @@ router.get(
   getEnrollments
 );
 router.get("/enrollment/:id", getSingleEnrollment);
+router.get("/enrollment/:id/module/:moduleId", getSingleModule);
+router.get(
+  "/enrollment/:id/module/:moduleId/chapter/:chapterId",
+  getSingleChapter
+);
+router.get(
+  "/enrollment/:id/module/:moduleId/chapter/:chapterId/lesson/:lessonId",
+  getSingleLesson
+);
+router.get(
+  "/enrollment/:id/module/:moduleId/chapter/:chapterId/quiz/:quizId",
+  getSingleQuiz
+);
 router
   .route("/admin/enrollment/:id")
   .put(isAuthenticatedUser, authorizeRoles("admin"), updateEnrollment)
@@ -29,5 +49,23 @@ router
 router.post("/enrollment/new", isAuthenticatedUser, newEnrollment);
 
 router.post("/enrollment/join", isAuthenticatedUser, joinEnrollment);
+
+router.put(
+  "/enrollment/:enrollmentId/module/:moduleId/chapter/:chapterId/mark-as-done",
+  isAuthenticatedUser,
+  markChapterAsDone
+);
+
+router.put(
+  "/enrollment/:enrollmentId/module/:moduleId/chapter/:chapterId/lesson/:lessonId/mark-as-done",
+  isAuthenticatedUser,
+  markLessonAsDone
+);
+
+router.put(
+  "/enrollment/:enrollmentId/module/:moduleId/chapter/:chapterId/quiz/:quizId/mark-as-done",
+  isAuthenticatedUser,
+  markQuizAsDone
+);
 
 module.exports = router;

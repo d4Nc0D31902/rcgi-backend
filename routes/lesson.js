@@ -7,7 +7,7 @@ const {
   getSingleLesson,
   updateLesson,
   deleteLesson,
-  addContent,
+  markLessonAsDone,
 } = require("../controllers/lessonController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -28,6 +28,11 @@ router.post(
   isAuthenticatedUser,
   authorizeRoles("admin"),
   newLesson
+);
+router.put(
+  "/admin/lesson/:id/done", // Endpoint for marking lesson as done
+  isAuthenticatedUser,
+  markLessonAsDone // Controller function to mark lesson as done
 );
 
 module.exports = router;

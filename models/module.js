@@ -28,6 +28,13 @@ const moduleSchema = new mongoose.Schema(
         ref: "Chapter",
       },
     ],
+    // status: {
+    //   type: String,
+    //   enum: {
+    //     values: ["Not Done", "Done"],
+    //   },
+    //   default: "Not Done",
+    // },
   },
   {
     timestamps: true,

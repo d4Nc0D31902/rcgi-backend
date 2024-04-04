@@ -76,3 +76,22 @@ exports.getLessons = async (req, res, next) => {
   }
 };
 
+exports.markLessonAsDone = async (req, res, next) => {
+  try {
+    const lesson = await Lesson.findById(req.params.id);
+    if (!lesson) {
+      return next(new ErrorHandler("Lesson not found", 404));
+    }
+
+    lesson.status = "Done";
+    await lesson.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Lesson marked as done",
+      lesson,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
