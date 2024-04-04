@@ -21,7 +21,7 @@ app.use(
   //   })
   // );
   cors({
-    origin: "hhttps://rcgi-frontend.vercel.app",
+    origin: "https://rcgi-frontend.vercel.app",
     credentials: true,
   })
 );
