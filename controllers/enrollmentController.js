@@ -607,7 +607,6 @@ exports.markQuizAsDone = async (req, res, next) => {
       return next(new ErrorHandler("Quiz not found in this chapter", 404));
     }
 
-    // Update quiz status to "Done"
     quizToUpdate.status = "Done";
 
     await enrollment.save();
@@ -615,6 +614,35 @@ exports.markQuizAsDone = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Quiz marked as done successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.markModuleAsDone = async (req, res, next) => {
+  try {
+    const { enrollmentId, moduleId } = req.params;
+
+    const enrollment = await Enrollment.findById(enrollmentId);
+    if (!enrollment) {
+      return next(new ErrorHandler("Enrollment not found", 404));
+    }
+
+    const moduleToUpdate = enrollment.module.find((mod) =>
+      mod._id.equals(moduleId)
+    );
+    if (!moduleToUpdate) {
+      return next(new ErrorHandler("Module not found in this enrollment", 404));
+    }
+
+    moduleToUpdate.status = "Done";
+
+    await enrollment.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Module marked as done successfully",
     });
   } catch (error) {
     next(error);

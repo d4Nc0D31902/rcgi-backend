@@ -30,9 +30,9 @@ router.post(
   newLesson
 );
 router.put(
-  "/admin/lesson/:id/done", // Endpoint for marking lesson as done
+  "/admin/lesson/:id/done", 
   isAuthenticatedUser,
-  markLessonAsDone // Controller function to mark lesson as done
+  markLessonAsDone 
 );
 
 module.exports = router;
