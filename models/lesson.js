@@ -12,7 +12,7 @@ const lessonSchema = new mongoose.Schema(
     },
     videoURL: {
       type: String,
-      required: true,
+      // required: true,
     },
     // status: {
     //   type: String,
