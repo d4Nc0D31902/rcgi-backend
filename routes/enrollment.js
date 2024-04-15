@@ -17,6 +17,8 @@ const {
   markLessonAsDone,
   markQuizAsDone,
   markModuleAsDone,
+  createSubmit,
+  createRetake,
 } = require("../controllers/enrollmentController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -73,6 +75,18 @@ router.put(
   "/enrollment/:enrollmentId/module/:moduleId/mark-as-done",
   isAuthenticatedUser,
   markModuleAsDone
+);
+
+router.post(
+  "/enrollment/:enrollmentId/submit",
+  isAuthenticatedUser,
+  createSubmit
+);
+
+router.post(
+  "/enrollment/:enrollmentId/retake",
+  isAuthenticatedUser,
+  createRetake
 );
 
 module.exports = router;

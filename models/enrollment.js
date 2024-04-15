@@ -1,5 +1,44 @@
 const mongoose = require("mongoose");
 
+const submitSchema = mongoose.Schema({
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+  },
+  chapter: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Chapter",
+  },
+  quiz: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Quiz",
+  },
+  score: {
+    type: Number,
+  },
+  result: {
+    type: String,
+  },
+});
+
+const retakeSchema = mongoose.Schema({
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+  },
+  chapter: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Chapter",
+  },
+  quiz: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Quiz",
+  },
+  retake: {
+    type: Number,
+  },
+});
+
 const enrollmentSchema = new mongoose.Schema(
   {
     user: [
@@ -79,6 +118,8 @@ const enrollmentSchema = new mongoose.Schema(
         },
       },
     ],
+    submit: [submitSchema],
+    retake: [retakeSchema],
   },
   {
     timestamps: true,

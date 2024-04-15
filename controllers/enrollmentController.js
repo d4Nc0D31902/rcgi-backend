@@ -24,152 +24,6 @@ exports.newEnrollment = async (req, res, next) => {
   }
 };
 
-// exports.joinEnrollment = async (req, res, next) => {
-//   try {
-//     const { userId, courseId } = req.body;
-
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return next(new ErrorHandler("User not found", 404));
-//     }
-
-//     const course = await Course.findById(courseId).populate("modules");
-//     if (!course) {
-//       return next(new ErrorHandler("Course not found", 404));
-//     }
-
-//     const enrollment = await Enrollment.findOne({
-//       user: userId,
-//       "course.courseId": courseId,
-//     });
-//     if (enrollment) {
-//       return next(
-//         new ErrorHandler("User is already enrolled in this course", 400)
-//       );
-//     }
-
-//     const modules = course.modules.map((module) => ({ moduleId: module._id }));
-
-//     await Enrollment.create({
-//       user: userId,
-//       course: [{ courseId: courseId }],
-//       module: modules,
-//     });
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Enrollment created successfully",
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-// exports.joinEnrollment = async (req, res, next) => {
-//   try {
-//     const { userId, courseId } = req.body;
-
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return next(new ErrorHandler("User not found", 404));
-//     }
-
-//     const course = await Course.findById(courseId).populate("modules");
-//     if (!course) {
-//       return next(new ErrorHandler("Course not found", 404));
-//     }
-
-//     const enrollment = await Enrollment.findOne({
-//       user: userId,
-//       "course.courseId": courseId,
-//     });
-//     if (enrollment) {
-//       return next(
-//         new ErrorHandler("User is already enrolled in this course", 400)
-//       );
-//     }
-
-//     const modules = course.modules.map((module) => {
-//       const moduleData = {
-//         moduleId: module._id,
-//         chapter: module.chapters.map((chapter) => ({ chapterId: chapter._id })),
-//       };
-//       return moduleData;
-//     });
-
-//     await Enrollment.create({
-//       user: userId,
-//       course: [{ courseId: courseId }],
-//       module: modules,
-//     });
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Enrollment created successfully",
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-// exports.joinEnrollment = async (req, res, next) => {
-//   try {
-//     const { userId, courseId } = req.body;
-
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return next(new ErrorHandler("User not found", 404));
-//     }
-
-//     const course = await Course.findById(courseId).populate({
-//       path: "modules",
-//       populate: {
-//         path: "chapters",
-//         populate: {
-//           path: "lessons",
-//         },
-//       },
-//     });
-//     if (!course) {
-//       return next(new ErrorHandler("Course not found", 404));
-//     }
-
-//     const enrollment = await Enrollment.findOne({
-//       user: userId,
-//       "course.courseId": courseId,
-//     });
-//     if (enrollment) {
-//       return next(
-//         new ErrorHandler("User is already enrolled in this course", 400)
-//       );
-//     }
-
-//     const modules = course.modules.map((module) => {
-//       const moduleData = {
-//         moduleId: module._id,
-//         chapter: module.chapters.map((chapter) => ({
-//           chapterId: chapter._id,
-//           lessons: chapter.lessons.map((lesson) => ({ lessonId: lesson._id })),
-//         })),
-//       };
-//       return moduleData;
-//     });
-
-//     await Enrollment.create({
-//       user: userId,
-//       course: [{ courseId: courseId }],
-//       module: modules,
-//     });
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Enrollment created successfully",
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
 exports.joinEnrollment = async (req, res, next) => {
   try {
     const { userId, courseId } = req.body;
@@ -252,43 +106,6 @@ exports.getSingleEnrollment = async (req, res, next) => {
     next(error);
   }
 };
-
-// exports.getSingleModule = async (req, res, next) => {
-//   try {
-//     const enrollment = await Enrollment.findById(req.params.id)
-//       .populate({
-//         path: "course.courseId",
-//         select: "-modules -status",
-//       })
-//       .populate({
-//         path: "module.moduleId",
-//         select: "-chapters -status",
-//       })
-//       .populate({
-//         path: "module.chapter.chapterId",
-//         select: "-lessons -quizzes -status",
-//       })
-//       .populate("user");
-
-//     if (!enrollment) {
-//       return next(new ErrorHandler("Enrollment not found", 404));
-//     }
-//     const singleModule = enrollment.module.find((module) =>
-//       module._id.equals(req.params.moduleId)
-//     );
-
-//     if (!singleModule) {
-//       return next(new ErrorHandler("Module not found in this enrollment", 404));
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       module: singleModule,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 exports.getSingleModule = async (req, res, next) => {
   try {
@@ -486,18 +303,6 @@ exports.deleteEnrollment = async (req, res, next) => {
   }
 };
 
-// exports.getEnrollments = async (req, res, next) => {
-//   try {
-//     const enrollments = await Enrollment.find();
-//     res.status(200).json({
-//       success: true,
-//       enrollments,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
 exports.getEnrollments = async (req, res, next) => {
   try {
     const enrollments = await Enrollment.find()
@@ -679,6 +484,50 @@ exports.markModuleAsDone = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Module marked as done successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.createSubmit = async (req, res, next) => {
+  try {
+    const { enrollmentId } = req.params;
+    const { user, chapter, quiz, score, result } = req.body;
+
+    const enrollment = await Enrollment.findById(enrollmentId);
+    if (!enrollment) {
+      return next(new ErrorHandler("Enrollment not found", 404));
+    }
+
+    enrollment.submit.push({ user, chapter, quiz, score, result });
+    await enrollment.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Submission created successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.createRetake = async (req, res, next) => {
+  try {
+    const { enrollmentId } = req.params;
+    const { user, chapter, quiz, retake } = req.body;
+
+    const enrollment = await Enrollment.findById(enrollmentId);
+    if (!enrollment) {
+      return next(new ErrorHandler("Enrollment not found", 404));
+    }
+
+    enrollment.retake.push({ user, chapter, quiz, retake });
+    await enrollment.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Retake created successfully",
     });
   } catch (error) {
     next(error);
