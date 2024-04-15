@@ -16,6 +16,8 @@ const {
   getUserDetails,
   updateUser,
   deleteUser,
+  deactivateUser,
+  reactivateUser,
 } = require("../controllers/authController");
 router.post("/register", upload.single("avatar"), registerUser);
 router.post("/login", loginUser);
@@ -30,6 +32,19 @@ router.put(
   isAuthenticatedUser,
   upload.single("avatar"),
   updateProfile
+);
+
+router.put(
+  "/admin/user/deactivate/:id",
+  isAuthenticatedUser,
+  authorizeRoles("admin", "officer"),
+  deactivateUser
+);
+router.put(
+  "/admin/user/reactivate/:id",
+  isAuthenticatedUser,
+  authorizeRoles("admin", "officer"),
+  reactivateUser
 );
 
 router

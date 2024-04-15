@@ -486,9 +486,45 @@ exports.deleteEnrollment = async (req, res, next) => {
   }
 };
 
+// exports.getEnrollments = async (req, res, next) => {
+//   try {
+//     const enrollments = await Enrollment.find();
+//     res.status(200).json({
+//       success: true,
+//       enrollments,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 exports.getEnrollments = async (req, res, next) => {
   try {
-    const enrollments = await Enrollment.find();
+    const enrollments = await Enrollment.find()
+      .populate({
+        path: "user",
+        select: "name",
+      })
+      .populate({
+        path: "course.courseId",
+        select: "title",
+      })
+      .populate({
+        path: "module.moduleId",
+        select: "-__v",
+      })
+      .populate({
+        path: "module.chapter.chapterId",
+        select: "-__v",
+      })
+      .populate({
+        path: "module.chapter.lessons.lessonId",
+        select: "-__v",
+      })
+      .populate({
+        path: "module.chapter.quizzes.quizId",
+        select: "-__v",
+      });
     res.status(200).json({
       success: true,
       enrollments,
