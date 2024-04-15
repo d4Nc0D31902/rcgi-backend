@@ -14,7 +14,7 @@ const submitSchema = mongoose.Schema({
     ref: "Quiz",
   },
   score: {
-    type: Number,
+    type: String,
   },
   result: {
     type: String,

@@ -303,6 +303,42 @@ exports.deleteEnrollment = async (req, res, next) => {
   }
 };
 
+// exports.getEnrollments = async (req, res, next) => {
+//   try {
+//     const enrollments = await Enrollment.find()
+//       .populate({
+//         path: "user",
+//         select: "name company",
+//       })
+//       .populate({
+//         path: "course.courseId",
+//         select: "title",
+//       })
+//       .populate({
+//         path: "module.moduleId",
+//         select: "-__v",
+//       })
+//       .populate({
+//         path: "module.chapter.chapterId",
+//         select: "-__v",
+//       })
+//       .populate({
+//         path: "module.chapter.lessons.lessonId",
+//         select: "-__v",
+//       })
+//       .populate({
+//         path: "module.chapter.quizzes.quizId",
+//         select: "-__v",
+//       });
+//     res.status(200).json({
+//       success: true,
+//       enrollments,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 exports.getEnrollments = async (req, res, next) => {
   try {
     const enrollments = await Enrollment.find()
@@ -329,7 +365,32 @@ exports.getEnrollments = async (req, res, next) => {
       .populate({
         path: "module.chapter.quizzes.quizId",
         select: "-__v",
+      })
+      .populate({
+        path: "retake.user",
+        select: "name company",
+      })
+      .populate({
+        path: "retake.chapter",
+        select: "title",
+      })
+      .populate({
+        path: "retake.quiz",
+        select: "title",
+      })
+      .populate({
+        path: "submit.user",
+        select: "name company",
+      })
+      .populate({
+        path: "submit.chapter",
+        select: "title",
+      })
+      .populate({
+        path: "submit.quiz",
+        select: "title",
       });
+
     res.status(200).json({
       success: true,
       enrollments,
