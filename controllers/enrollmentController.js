@@ -503,7 +503,7 @@ exports.getEnrollments = async (req, res, next) => {
     const enrollments = await Enrollment.find()
       .populate({
         path: "user",
-        select: "name",
+        select: "name company",
       })
       .populate({
         path: "course.courseId",
