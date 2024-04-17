@@ -660,7 +660,7 @@ exports.checkProgress = async (req, res, next) => {
       });
       for (const admin of admins) {
         const adminNotification = new Notifications({
-          message: ` ${enrollment.user[0].name} from ${enrollment.user[0].company} Completed the Course!.`,
+          message: `${enrollment.user[0].name} from ${enrollment.user[0].company} Completed the Course!.`,
           user: admin._id,
         });
         await adminNotification.save();
