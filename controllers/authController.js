@@ -46,7 +46,7 @@ exports.loginUser = async (req, res, next) => {
   if (!user) {
     return next(new ErrorHandler("Invalid Email or Password", 401));
   }
-  
+
   if (user.status === "inactive") {
     return next(
       new ErrorHandler("Sorry your Account has been Deactivated", 401)
@@ -216,11 +216,30 @@ exports.getUserDetails = async (req, res, next) => {
     user,
   });
 };
+// exports.updateUser = async (req, res, next) => {
+//   const newUserData = {
+//     name: req.body.name,
+//     email: req.body.email,
+//     role: req.body.role,
+//   };
+
+//   const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
+//     new: true,
+//     runValidators: true,
+//   });
+
+//   res.status(200).json({
+//     success: true,
+//   });
+// };
+
 exports.updateUser = async (req, res, next) => {
   const newUserData = {
     name: req.body.name,
     email: req.body.email,
     role: req.body.role,
+    company: req.body.company,
+    employee_id: req.body.employee_id,
   };
 
   const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
