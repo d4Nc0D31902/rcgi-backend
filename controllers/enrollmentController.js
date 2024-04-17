@@ -3,7 +3,7 @@ const Course = require("../models/course");
 const User = require("../models/user");
 const Chapter = require("../models/chapter");
 const ErrorHandler = require("../utils/errorHandler");
-
+const Notifications = require("../models/notifications");
 const checkUser = async (userId, courseId) => {
   const enrollment = await Enrollment.findOne({
     user: userId,
@@ -589,6 +589,87 @@ exports.createRetake = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: "Retake created successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// exports.checkProgress = async (req, res, next) => {
+//   try {
+//     const enrollment = await Enrollment.findById(req.params.id);
+
+//     if (!enrollment) {
+//       return next(new ErrorHandler("Enrollment not found", 404));
+//     }
+
+//     const isDone =
+//       enrollment.module.every((module) =>
+//         module.chapter.every(
+//           (chapter) =>
+//             chapter.lessons.every((lesson) => lesson.status === "Done") &&
+//             chapter.quizzes.every((quiz) => quiz.status === "Done")
+//         )
+//       ) && enrollment.module.every((module) => module.status === "Done");
+
+//     res.status(200).json({
+//       success: true,
+//       progress: isDone ? "Completed" : "In Progress",
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+exports.checkProgress = async (req, res, next) => {
+  try {
+    const enrollment = await Enrollment.findById(req.params.id)
+      .populate({
+        path: "course.courseId",
+        select: "title",
+      })
+      .populate({
+        path: "user",
+        select: "name company",
+      });
+
+    if (!enrollment) {
+      return next(new ErrorHandler("Enrollment not found", 404));
+    }
+
+    const isDone =
+      enrollment.module.every((module) =>
+        module.chapter.every(
+          (chapter) =>
+            chapter.lessons.every((lesson) => lesson.status === "Done") &&
+            chapter.quizzes.every((quiz) => quiz.status === "Done")
+        )
+      ) && enrollment.module.every((module) => module.status === "Done");
+
+    const progress = isDone ? "Completed" : "In Progress";
+
+    if (progress === "Completed") {
+      const requesterNotification = new Notifications({
+        message: `Congratulations on Completing ${enrollment.course[0].courseId.title}`,
+        user: req.user._id,
+      });
+      await requesterNotification.save();
+
+      const admins = await User.find({
+        role: "admin",
+      });
+      for (const admin of admins) {
+        const adminNotification = new Notifications({
+          message: ` ${enrollment.user[0].name} from ${enrollment.user[0].company} Completed the Course!.`,
+          user: admin._id,
+        });
+        await adminNotification.save();
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      progress,
     });
   } catch (error) {
     next(error);

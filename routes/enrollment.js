@@ -19,6 +19,7 @@ const {
   markModuleAsDone,
   createSubmit,
   createRetake,
+  checkProgress, // Add checkProgress here
 } = require("../controllers/enrollmentController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -88,5 +89,7 @@ router.post(
   isAuthenticatedUser,
   createRetake
 );
+
+router.get("/enrollment/:id/progress", isAuthenticatedUser, checkProgress);
 
 module.exports = router;

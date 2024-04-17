@@ -11,6 +11,7 @@ const chapter = require("./routes/chapter");
 const lesson = require("./routes/lesson");
 const enrollment = require("./routes/enrollment");
 const quiz = require("./routes/quiz");
+const notification = require("./routes/notification");
 const errorMiddleware = require("./middlewares/errors");
 app.use(express.json({ limit: "100mb" }));
 // app.set("trust proxy", 1);
@@ -36,6 +37,7 @@ app.use("/api/v1", chapter);
 app.use("/api/v1", lesson);
 app.use("/api/v1", enrollment);
 app.use("/api/v1", quiz);
+app.use("/api/v1", notification);
 
 app.use(errorMiddleware);
 module.exports = app;
