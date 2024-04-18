@@ -634,7 +634,7 @@ exports.checkProgress = async (req, res, next) => {
       });
       for (const admin of admins) {
         const adminNotification = new Notifications({
-          message: `<img src="${enrollment.user[0].avatar.url}" style="vertical-align: middle; width: 30px; height: 30px; border-radius: 50%;"> ${enrollment.user[0].name} from ${enrollment.user[0].company} Completed the Course!.`,
+          message: `<img src="${enrollment.user[0].avatar.url}" style="vertical-align: middle; width: 30px; height: 30px; border-radius: 50%;"> ${enrollment.user[0].name} from ${enrollment.user[0].company} Completed the Course!`,
           user: admin._id,
         });
         await adminNotification.save();
