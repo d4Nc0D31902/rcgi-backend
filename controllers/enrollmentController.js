@@ -595,32 +595,6 @@ exports.createRetake = async (req, res, next) => {
   }
 };
 
-// exports.checkProgress = async (req, res, next) => {
-//   try {
-//     const enrollment = await Enrollment.findById(req.params.id);
-
-//     if (!enrollment) {
-//       return next(new ErrorHandler("Enrollment not found", 404));
-//     }
-
-//     const isDone =
-//       enrollment.module.every((module) =>
-//         module.chapter.every(
-//           (chapter) =>
-//             chapter.lessons.every((lesson) => lesson.status === "Done") &&
-//             chapter.quizzes.every((quiz) => quiz.status === "Done")
-//         )
-//       ) && enrollment.module.every((module) => module.status === "Done");
-
-//     res.status(200).json({
-//       success: true,
-//       progress: isDone ? "Completed" : "In Progress",
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
 exports.checkProgress = async (req, res, next) => {
   try {
     const enrollment = await Enrollment.findById(req.params.id)
@@ -630,7 +604,7 @@ exports.checkProgress = async (req, res, next) => {
       })
       .populate({
         path: "user",
-        select: "name company",
+        select: "name company avatar", // Include avatar field
       });
 
     if (!enrollment) {
@@ -660,7 +634,7 @@ exports.checkProgress = async (req, res, next) => {
       });
       for (const admin of admins) {
         const adminNotification = new Notifications({
-          message: `${enrollment.user[0].name} from ${enrollment.user[0].company} Completed the Course!.`,
+          message: `<img src="${enrollment.user[0].avatar.url}" style="vertical-align: middle; width: 30px; height: 30px; border-radius: 50%;"> ${enrollment.user[0].name} from ${enrollment.user[0].company} Completed the Course!.`,
           user: admin._id,
         });
         await adminNotification.save();
