@@ -34,17 +34,44 @@ exports.registerUser = async (req, res, next) => {
   sendToken(user, 200, res);
 };
 
-exports.loginUser = async (req, res, next) => {
-  const { email, password } = req.body;
+// exports.loginUser = async (req, res, next) => {
+//   const { email, password } = req.body;
 
-  if (!email || !password) {
-    return next(new ErrorHandler("Please enter email & password", 400));
+//   if (!email || !password) {
+//     return next(new ErrorHandler("Please enter email & password", 400));
+//   }
+
+//   const user = await User.findOne({ email }).select("+password");
+
+//   if (!user) {
+//     return next(new ErrorHandler("Invalid Email or Password", 401));
+//   }
+
+//   if (user.status === "inactive") {
+//     return next(
+//       new ErrorHandler("Sorry your Account has been Deactivated", 401)
+//     );
+//   }
+
+//   const isPasswordMatched = await user.comparePassword(password);
+
+//   if (!isPasswordMatched) {
+//     return next(new ErrorHandler("Invalid Email or Password", 401));
+//   }
+//   sendToken(user, 200, res);
+// };
+
+exports.loginUser = async (req, res, next) => {
+  const { employee_id, password } = req.body;
+
+  if (!employee_id || !password) {
+    return next(new ErrorHandler("Please enter employee ID & password", 400));
   }
 
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ employee_id }).select("+password");
 
   if (!user) {
-    return next(new ErrorHandler("Invalid Email or Password", 401));
+    return next(new ErrorHandler("Invalid Employee ID or Password", 401));
   }
 
   if (user.status === "inactive") {
@@ -56,7 +83,7 @@ exports.loginUser = async (req, res, next) => {
   const isPasswordMatched = await user.comparePassword(password);
 
   if (!isPasswordMatched) {
-    return next(new ErrorHandler("Invalid Email or Password", 401));
+    return next(new ErrorHandler("Invalid Employee ID or Password", 401));
   }
   sendToken(user, 200, res);
 };
