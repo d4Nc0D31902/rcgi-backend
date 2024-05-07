@@ -8,7 +8,9 @@ const {
   getSingleCourse,
   updateCourse,
   deleteCourse,
-  addModule, // Import addModule function
+  addModule,
+  deactivateCourse,
+  reactivateCourse,
 } = require("../controllers/courseController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -38,6 +40,19 @@ router.post(
   authorizeRoles("admin"),
   upload.array("images", 10),
   addModule
+);
+
+router.put(
+  "/admin/course/deactivate/:id",
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  deactivateCourse
+);
+router.put(
+  "/admin/course/reactivate/:id",
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  reactivateCourse
 );
 
 module.exports = router;

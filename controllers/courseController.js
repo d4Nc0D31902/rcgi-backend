@@ -168,3 +168,41 @@ exports.getCourses = async (req, res, next) => {
     courses,
   });
 };
+
+exports.deactivateCourse = async (req, res, next) => {
+  const course = await Course.findByIdAndUpdate(
+    req.params.id,
+    { status: "inactive" },
+    { new: true }
+  );
+
+  if (!course) {
+    return next(
+      new ErrorHandler(`Course not found with id: ${req.params.id}`, 404)
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Course deactivated successfully",
+  });
+};
+
+exports.reactivateCourse = async (req, res, next) => {
+  const course = await Course.findByIdAndUpdate(
+    req.params.id,
+    { status: "active" },
+    { new: true }
+  );
+
+  if (!course) {
+    return next(
+      new ErrorHandler(`Course not found with id: ${req.params.id}`, 404)
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Course reactivated successfully",
+  });
+};

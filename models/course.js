@@ -28,6 +28,11 @@ const courseSchema = new mongoose.Schema(
         ref: "Module",
       },
     ],
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
   },
   {
     timestamps: true,
