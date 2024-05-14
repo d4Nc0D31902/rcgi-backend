@@ -604,7 +604,7 @@ exports.checkProgress = async (req, res, next) => {
       })
       .populate({
         path: "user",
-        select: "name company avatar", // Include avatar field
+        select: "name company avatar",
       });
 
     if (!enrollment) {
@@ -622,6 +622,14 @@ exports.checkProgress = async (req, res, next) => {
 
     const progress = isDone ? "Completed" : "In Progress";
 
+    // await global.io
+    //   .timeout(1000)
+    //   .emit(`notification`, {
+    //     type: "success",
+    //     message: "Notif completed",
+    //     user: req.user._id,
+    //   });
+
     if (progress === "Completed") {
       const requesterNotification = new Notifications({
         message: `Congratulations on Completing ${enrollment.course[0].courseId.title}`,
@@ -632,6 +640,12 @@ exports.checkProgress = async (req, res, next) => {
       const admins = await User.find({
         role: "admin",
       });
+
+      await global.io.timeout(1000).emit(`notification`, {
+        message: "Sending notifications to admins...",
+        user: req.user._id,
+      });
+
       for (const admin of admins) {
         const adminNotification = new Notifications({
           message: `<img src="${enrollment.user[0].avatar.url}" style="vertical-align: middle; width: 30px; height: 30px; border-radius: 50%;"> ${enrollment.user[0].name} from ${enrollment.user[0].company} Completed the Course!`,

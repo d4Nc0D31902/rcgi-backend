@@ -37,13 +37,13 @@ router.put(
 router.put(
   "/admin/user/deactivate/:id",
   isAuthenticatedUser,
-  authorizeRoles("admin", "officer"),
+  authorizeRoles("admin"),
   deactivateUser
 );
 router.put(
   "/admin/user/reactivate/:id",
   isAuthenticatedUser,
-  authorizeRoles("admin", "officer"),
+  authorizeRoles("admin"),
   reactivateUser
 );
 
