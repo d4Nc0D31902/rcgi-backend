@@ -28,7 +28,11 @@ const io = socketIo(server, {
   },
 });
 
-app.use(cors());
+// Manually set CORS headers for Socket.IO responses
+io.use((socket, next) => {
+  socket.handshake.headers.origin = socket.handshake.headers.origin || "*";
+  next();
+});
 
 io.on("connection", (socket) => {
   console.log("New client connected");
