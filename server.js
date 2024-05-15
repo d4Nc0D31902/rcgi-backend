@@ -6,6 +6,8 @@ const http = require("http");
 const socketIo = require("socket.io");
 const cors = require("cors");
 
+app.use(cors());
+
 require("dotenv").config({ path: "./config/.env" });
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -26,12 +28,6 @@ const io = socketIo(server, {
     origin: ["http://localhost:3000", "https://rcgi-frontend.vercel.app"],
     credentials: true,
   },
-});
-
-// Manually set CORS headers for Socket.IO responses
-io.use((socket, next) => {
-  socket.handshake.headers.origin = socket.handshake.headers.origin || "*";
-  next();
 });
 
 io.on("connection", (socket) => {
