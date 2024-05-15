@@ -6,8 +6,6 @@ const http = require("http");
 const socketIo = require("socket.io");
 const cors = require("cors");
 
-app.use(cors());
-
 require("dotenv").config({ path: "./config/.env" });
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
