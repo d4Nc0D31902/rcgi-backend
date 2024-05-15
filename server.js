@@ -2,9 +2,9 @@ const app = require("./app");
 const connectDatabase = require("./config/database");
 const path = require("path");
 const cloudinary = require("cloudinary");
-const http = require("http");
-const socketIo = require("socket.io");
-const cors = require("cors");
+// const http = require("http");
+// const socketIo = require("socket.io");
+// const cors = require("cors");
 
 require("dotenv").config({ path: "./config/.env" });
 cloudinary.config({
@@ -19,24 +19,24 @@ console.log(process.env.DATABASE);
 if (process.env.NODE_ENV !== "PRODUCTION")
   require("dotenv").config({ path: "backend/config/.env" });
 
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
-const io = socketIo(server, {
-  cors: {
-    origin: ["http://localhost:3000", "https://rcgi-frontend.vercel.app"],
-    credentials: true,
-  },
-});
+// const io = socketIo(server, {
+//   cors: {
+//     origin: ["http://localhost:3000", "https://rcgi-frontend.vercel.app"],
+//     credentials: true,
+//   },
+// });
 
-io.on("connection", (socket) => {
-  console.log("New client connected");
+// io.on("connection", (socket) => {
+//   console.log("New client connected");
 
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-  });
-});
+//   socket.on("disconnect", () => {
+//     console.log("Client disconnected");
+//   });
+// });
 
-global.io = io;
+// global.io = io;
 
 server.listen(process.env.PORT, () => {
   console.log(
