@@ -28,6 +28,8 @@ const io = socketIo(server, {
   },
 });
 
+app.use(cors());
+
 io.on("connection", (socket) => {
   console.log("New client connected");
 
