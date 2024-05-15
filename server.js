@@ -23,8 +23,7 @@ const server = http.createServer(app);
 
 const io = socketIo(server, {
   cors: {
-    // origin: ["http://localhost:3000", "https://rcgi-frontend.vercel.app"],
-    origin: "https://rcgi-frontend.vercel.app",
+    origin: ["http://localhost:3000", "https://rcgi-frontend.vercel.app"],
     credentials: true,
   },
 });
