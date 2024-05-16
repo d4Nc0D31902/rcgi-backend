@@ -11,23 +11,18 @@ const chapter = require("./routes/chapter");
 const lesson = require("./routes/lesson");
 const enrollment = require("./routes/enrollment");
 const quiz = require("./routes/quiz");
+const feedback = require("./routes/feedback");
 const notification = require("./routes/notification");
 const errorMiddleware = require("./middlewares/errors");
 app.use(express.json({ limit: "100mb" }));
 // app.set("trust proxy", 1);
 app.use(
-  // cors({
-  //   origin: "http://localhost:3000",
-  //   credentials: true,
-  // })
   cors({
+    // origin:  "http://localhost:3000",
+    //   origin: "https://rcgi-frontend.vercel.app",
     origin: "https://rcgi-frontend.onrender.com",
     credentials: true,
   })
-  // cors({
-  //   origin: "https://rcgi-frontend.vercel.app",
-  //   credentials: true,
-  // })
 );
 app.use(cookieParser());
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
@@ -42,6 +37,7 @@ app.use("/api/v1", lesson);
 app.use("/api/v1", enrollment);
 app.use("/api/v1", quiz);
 app.use("/api/v1", notification);
+app.use("/api/v1", feedback);
 
 app.use(errorMiddleware);
 module.exports = app;

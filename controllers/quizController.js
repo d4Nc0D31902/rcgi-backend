@@ -55,10 +55,8 @@ exports.updateQuiz = async (req, res, next) => {
       return next(new ErrorHandler("Quiz not found", 404));
     }
 
-    // Parse the content field from string to JSON
     req.body.content = JSON.parse(req.body.content);
 
-    // Update the quiz with the parsed content
     quiz = await Quiz.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
