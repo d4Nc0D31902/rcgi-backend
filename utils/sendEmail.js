@@ -10,8 +10,8 @@ const sendEmail = async (options) => {
   });
 
   const message = {
-    from: options.email,
-    to: `${process.env.GMAIL_EMAIL}`,
+    from: process.env.GMAIL_EMAIL,
+    to: options.email,
     subject: options.subject,
     text: options.message,
     html: options.html,

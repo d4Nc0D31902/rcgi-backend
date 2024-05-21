@@ -4,6 +4,7 @@ const upload = require("../utils/multer");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const {
+  importUsers,
   registerUser,
   loginUser,
   logout,
@@ -57,5 +58,13 @@ router
   .delete(isAuthenticatedUser, authorizeRoles("admin"), deleteUser);
 
 router.get("/logout", logout);
+
+router.post(
+  "/import-users",
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  upload.single("csvFile"),
+  importUsers
+);
 
 module.exports = router;

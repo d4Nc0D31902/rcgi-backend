@@ -5,6 +5,8 @@ const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
 const cloudinary = require("cloudinary").v2;
+const csv = require("csvtojson");
+const xlsx = require("xlsx");
 
 exports.registerUser = async (req, res, next) => {
   const result = await cloudinary.uploader.upload(
@@ -19,7 +21,8 @@ exports.registerUser = async (req, res, next) => {
     }
   );
 
-  const { name, email, password, company, employee_id } = req.body;
+  const { name, password, company, employee_id } = req.body;
+  const email = " ";
   const user = await User.create({
     name,
     email,
@@ -33,33 +36,6 @@ exports.registerUser = async (req, res, next) => {
   });
   sendToken(user, 200, res);
 };
-
-// exports.loginUser = async (req, res, next) => {
-//   const { email, password } = req.body;
-
-//   if (!email || !password) {
-//     return next(new ErrorHandler("Please enter email & password", 400));
-//   }
-
-//   const user = await User.findOne({ email }).select("+password");
-
-//   if (!user) {
-//     return next(new ErrorHandler("Invalid Email or Password", 401));
-//   }
-
-//   if (user.status === "inactive") {
-//     return next(
-//       new ErrorHandler("Sorry your Account has been Deactivated", 401)
-//     );
-//   }
-
-//   const isPasswordMatched = await user.comparePassword(password);
-
-//   if (!isPasswordMatched) {
-//     return next(new ErrorHandler("Invalid Email or Password", 401));
-//   }
-//   sendToken(user, 200, res);
-// };
 
 exports.loginUser = async (req, res, next) => {
   const { employee_id, password } = req.body;
@@ -243,22 +219,6 @@ exports.getUserDetails = async (req, res, next) => {
     user,
   });
 };
-// exports.updateUser = async (req, res, next) => {
-//   const newUserData = {
-//     name: req.body.name,
-//     email: req.body.email,
-//     role: req.body.role,
-//   };
-
-//   const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
-//     new: true,
-//     runValidators: true,
-//   });
-
-//   res.status(200).json({
-//     success: true,
-//   });
-// };
 
 exports.updateUser = async (req, res, next) => {
   const newUserData = {
@@ -287,11 +247,6 @@ exports.deleteUser = async (req, res, next) => {
       new ErrorHandler(`User does not found with id: ${req.params.id}`)
     );
   }
-
-  // Remove avatar from cloudinary
-  // const image_id = user.avatar.public_id;
-  // await cloudinary.v2.uploader.destroy(image_id);
-
   await user.remove();
 
   res.status(200).json({
@@ -335,4 +290,26 @@ exports.reactivateUser = async (req, res, next) => {
     success: true,
     message: "User reactivated successfully",
   });
+};
+
+exports.importUsers = async (req, res, next) => {
+  if (!req.file) {
+    return next(new ErrorHandler("Please upload an Excel file", 400));
+  }
+
+  const excelFilePath = req.file.path;
+
+  try {
+    const workbook = xlsx.readFile(excelFilePath);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonArray = xlsx.utils.sheet_to_json(worksheet);
+
+    const users = await User.create(jsonArray);
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
 };
