@@ -19,10 +19,10 @@ exports.newFeedback = async (req, res, next) => {
     });
     await employeeNotification.save();
 
-    await global.io.timeout(1000).emit(`notification`, {
-      message: "Sending notifications to admins...",
-      user: req.user._id,
-    });
+    // await global.io.timeout(1000).emit(`notification`, {
+    //   message: "Sending notifications to admins...",
+    //   user: req.user._id,
+    // }); TRUE LOGIC USE THIS
 
     const admins = await User.find({
       role: { $in: ["admin"] },

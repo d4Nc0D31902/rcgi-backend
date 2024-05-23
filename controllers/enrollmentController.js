@@ -641,10 +641,10 @@ exports.checkProgress = async (req, res, next) => {
         role: "admin",
       });
 
-      await global.io.timeout(1000).emit(`notification`, {
-        message: "Sending notifications to admins...",
-        user: req.user._id,
-      });
+      // await global.io.timeout(1000).emit(`notification`, {
+      //   message: "Sending notifications to admins...",
+      //   user: req.user._id,
+      // }); TRUE SOCKET USE THIS
 
       for (const admin of admins) {
         const adminNotification = new Notifications({

@@ -2,9 +2,10 @@ const app = require("./app");
 const connectDatabase = require("./config/database");
 const path = require("path");
 const cloudinary = require("cloudinary");
-const http = require("http");
-const socketIo = require("socket.io");
-const cors = require("cors");
+// const http = require("http");
+// const socketIo = require("socket.io");
+// const cors = require("cors");
+//TRUE SOCKET USE THIS ^
 
 require("dotenv").config({ path: "./config/.env" });
 cloudinary.config({
@@ -19,25 +20,27 @@ console.log(process.env.DATABASE);
 if (process.env.NODE_ENV !== "PRODUCTION")
   require("dotenv").config({ path: "backend/config/.env" });
 
-const server = http.createServer(app);
 
-const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    // origin: "https://rcgi-frontend.onrender.com",
-    credentials: true,
-  },
-});
+//TRUE SOCKET USE THIS
+// const server = http.createServer(app);
 
-io.on("connection", (socket) => {
-  console.log("New client connected");
+// const io = socketIo(server, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     // origin: "https://rcgi-frontend.onrender.com",
+//     credentials: true,
+//   },
+// });
 
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-  });
-});
+// io.on("connection", (socket) => {
+//   console.log("New client connected");
 
-global.io = io;
+//   socket.on("disconnect", () => {
+//     console.log("Client disconnected");
+//   });
+// });
+
+// global.io = io;
 
 server.listen(process.env.PORT, () => {
   console.log(
