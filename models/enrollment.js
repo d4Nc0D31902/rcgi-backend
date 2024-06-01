@@ -69,6 +69,20 @@ const enrollmentSchema = new mongoose.Schema(
           ref: "Module",
           required: true,
         },
+        forum: [
+          {
+            forumId: {
+              type: mongoose.Schema.ObjectId,
+              ref: "Forum",
+              required: true,
+            },
+            status: {
+              type: String,
+              enum: ["Not Done", "Done"],
+              default: "Not Done",
+            },
+          },
+        ],
         chapter: [
           {
             chapterId: {

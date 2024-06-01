@@ -1,5 +1,6 @@
 const Module = require("../models/module");
 const Chapter = require("../models/chapter");
+const Forum = require("../models/forum");
 const ErrorHandler = require("../utils/errorHandler");
 const cloudinary = require("cloudinary");
 
@@ -45,10 +46,12 @@ exports.newModule = async (req, res, next) => {
 
 exports.getSingleModule = async (req, res, next) => {
   try {
-    const module = await Module.findById(req.params.id).populate({
-      path: "chapters",
-      populate: { path: "lessons quizzes" }, 
-    });
+    const module = await Module.findById(req.params.id)
+      .populate({
+        path: "chapters",
+        populate: [{ path: "lessons" }, { path: "quizzes" }],
+      })
+      .populate("forum");
 
     if (!module) {
       return next(new ErrorHandler("Module not found", 404));
@@ -77,6 +80,23 @@ exports.addChapter = async (req, res, next) => {
   res.status(201).json({
     success: true,
     chapter,
+  });
+};
+
+exports.addForum = async (req, res, next) => {
+  const module = await Module.findById(req.params.moduleId);
+  if (!module) {
+    return next(new ErrorHandler("Module not found", 404));
+  }
+
+  const forum = await Forum.create(req.body);
+
+  module.forum.push(forum._id);
+  await module.save();
+
+  res.status(201).json({
+    success: true,
+    forum,
   });
 };
 

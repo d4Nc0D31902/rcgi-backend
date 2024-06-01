@@ -14,13 +14,6 @@ const lessonSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
-    // status: {
-    //   type: String,
-    //   enum: {
-    //     values: ["Not Done", "Done"],
-    //   },
-    //   default: "Not Done",
-    // },
   },
   {
     timestamps: true,

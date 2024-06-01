@@ -28,13 +28,12 @@ const moduleSchema = new mongoose.Schema(
         ref: "Chapter",
       },
     ],
-    // status: {
-    //   type: String,
-    //   enum: {
-    //     values: ["Not Done", "Done"],
-    //   },
-    //   default: "Not Done",
-    // },
+    forum: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Forum",
+      },
+    ],
   },
   {
     timestamps: true,

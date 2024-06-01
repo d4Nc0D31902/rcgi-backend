@@ -25,13 +25,6 @@ const quizSchema = new mongoose.Schema(
     totalScore: {
       type: Number,
     },
-    // status: {
-    //   type: String,
-    //   enum: {
-    //     values: ["Not Done", "Done"],
-    //   },
-    //   default: "Not Done",
-    // },
   },
   {
     timestamps: true,

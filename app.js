@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+
 const products = require("./routes/product");
 const auth = require("./routes/auth");
 const order = require("./routes/order");
@@ -13,6 +14,8 @@ const enrollment = require("./routes/enrollment");
 const quiz = require("./routes/quiz");
 const feedback = require("./routes/feedback");
 const notification = require("./routes/notification");
+const forum = require("./routes/forum");
+
 const errorMiddleware = require("./middlewares/errors");
 app.use(express.json({ limit: "100mb" }));
 // app.set("trust proxy", 1);
@@ -38,6 +41,7 @@ app.use("/api/v1", enrollment);
 app.use("/api/v1", quiz);
 app.use("/api/v1", notification);
 app.use("/api/v1", feedback);
+app.use("/api/v1", forum);
 
 app.use(errorMiddleware);
 module.exports = app;

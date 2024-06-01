@@ -4,6 +4,7 @@ const User = require("../models/user");
 const Chapter = require("../models/chapter");
 const ErrorHandler = require("../utils/errorHandler");
 const Notifications = require("../models/notifications");
+const Forum = require("../models/forum");
 const checkUser = async (userId, courseId) => {
   const enrollment = await Enrollment.findOne({
     user: userId,
@@ -35,10 +36,13 @@ exports.joinEnrollment = async (req, res, next) => {
 
     const course = await Course.findById(courseId).populate({
       path: "modules",
-      populate: {
-        path: "chapters",
-        populate: [{ path: "lessons" }, { path: "quizzes" }],
-      },
+      populate: [
+        {
+          path: "chapters",
+          populate: [{ path: "lessons" }, { path: "quizzes" }],
+        },
+        { path: "forum" }, // Populate the forum field in modules
+      ],
     });
     if (!course) {
       return next(new ErrorHandler("Course not found", 404));
@@ -54,9 +58,11 @@ exports.joinEnrollment = async (req, res, next) => {
       );
     }
 
+    // Construct enrollment data
     const modules = course.modules.map((module) => {
       const moduleData = {
         moduleId: module._id,
+        forum: module.forum.map((forum) => ({ forumId: forum._id })), // Include forumId for each forum in the module
         chapter: module.chapters.map((chapter) => ({
           chapterId: chapter._id,
           lessons: chapter.lessons.map((lesson) => ({ lessonId: lesson._id })),
@@ -66,6 +72,7 @@ exports.joinEnrollment = async (req, res, next) => {
       return moduleData;
     });
 
+    // Create enrollment
     await Enrollment.create({
       user: userId,
       course: [{ courseId: courseId }],
@@ -116,7 +123,11 @@ exports.getSingleModule = async (req, res, next) => {
       })
       .populate({
         path: "module.moduleId",
-        select: "-chapters -status",
+        select: "-chapters -forum -status",
+      })
+      .populate({
+        path: "module.forum.forumId",
+        select: "-reply",
       })
       .populate({
         path: "module.chapter.chapterId",
@@ -302,42 +313,6 @@ exports.deleteEnrollment = async (req, res, next) => {
     next(error);
   }
 };
-
-// exports.getEnrollments = async (req, res, next) => {
-//   try {
-//     const enrollments = await Enrollment.find()
-//       .populate({
-//         path: "user",
-//         select: "name company",
-//       })
-//       .populate({
-//         path: "course.courseId",
-//         select: "title",
-//       })
-//       .populate({
-//         path: "module.moduleId",
-//         select: "-__v",
-//       })
-//       .populate({
-//         path: "module.chapter.chapterId",
-//         select: "-__v",
-//       })
-//       .populate({
-//         path: "module.chapter.lessons.lessonId",
-//         select: "-__v",
-//       })
-//       .populate({
-//         path: "module.chapter.quizzes.quizId",
-//         select: "-__v",
-//       });
-//     res.status(200).json({
-//       success: true,
-//       enrollments,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 exports.getEnrollments = async (req, res, next) => {
   try {
@@ -660,6 +635,70 @@ exports.checkProgress = async (req, res, next) => {
       progress,
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+exports.forumCreateReply = async (req, res, next) => {
+  try {
+    const { forumId } = req.params;
+    const { reply } = req.body;
+    const userId = req.user._id;
+
+    console.log("Creating reply for forum ID:", forumId);
+    console.log("Reply content:", reply);
+    console.log("User ID:", userId);
+
+    const forum = await Forum.findById(forumId);
+    if (!forum) {
+      console.log("Forum post not found");
+      return next(new ErrorHandler("Forum post not found", 404));
+    }
+
+    const newReply = {
+      user: userId,
+      reply,
+      createdAt: new Date(),
+    };
+
+    forum.reply.push(newReply);
+    await forum.save();
+
+    console.log("Reply added successfully");
+
+    // Update forum status to "Done" in the enrollment model
+    const enrollment = await Enrollment.findOne({
+      "module.forum.forumId": forumId,
+    });
+    if (!enrollment) {
+      console.log("Enrollment not found");
+      return next(new ErrorHandler("Enrollment not found", 404));
+    }
+
+    let forumUpdated = false;
+    enrollment.module.forEach((module) => {
+      module.forum.forEach((forum) => {
+        if (forum.forumId.equals(forumId)) {
+          forum.status = "Done";
+          forumUpdated = true;
+        }
+      });
+    });
+
+    if (forumUpdated) {
+      await enrollment.save();
+      console.log("Enrollment forum status updated to Done");
+    } else {
+      console.log("Forum not found in enrollment");
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Reply added successfully and forum status updated to Done",
+      forum,
+    });
+  } catch (error) {
+    console.error("Error creating reply:", error);
     next(error);
   }
 };

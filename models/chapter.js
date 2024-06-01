@@ -22,13 +22,6 @@ const chapterSchema = new mongoose.Schema(
         ref: "Quiz",
       },
     ],
-    // status: {
-    //   type: String,
-    //   enum: {
-    //     values: ["Not Done", "Done", "Finished"],
-    //   },
-    //   default: "Not Done",
-    // },
   },
   {
     timestamps: true,

@@ -9,6 +9,7 @@ const {
   updateModule,
   deleteModule,
   addChapter,
+  addForum,
 } = require("../controllers/moduleController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -38,6 +39,13 @@ router.post(
   isAuthenticatedUser,
   authorizeRoles("admin"),
   addChapter
+);
+
+router.post(
+  "/admin/module/:moduleId/forum/new",
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  addForum
 );
 
 module.exports = router;
