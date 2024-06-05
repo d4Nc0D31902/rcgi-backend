@@ -5,6 +5,7 @@ const Chapter = require("../models/chapter");
 const ErrorHandler = require("../utils/errorHandler");
 const Notifications = require("../models/notifications");
 const Forum = require("../models/forum");
+
 const checkUser = async (userId, courseId) => {
   const enrollment = await Enrollment.findOne({
     user: userId,
@@ -41,7 +42,7 @@ exports.joinEnrollment = async (req, res, next) => {
           path: "chapters",
           populate: [{ path: "lessons" }, { path: "quizzes" }],
         },
-        { path: "forum" }, // Populate the forum field in modules
+        { path: "forum" },
       ],
     });
     if (!course) {
@@ -62,7 +63,7 @@ exports.joinEnrollment = async (req, res, next) => {
     const modules = course.modules.map((module) => {
       const moduleData = {
         moduleId: module._id,
-        forum: module.forum.map((forum) => ({ forumId: forum._id })), // Include forumId for each forum in the module
+        forum: module.forum.map((forum) => ({ forumId: forum._id })),
         chapter: module.chapters.map((chapter) => ({
           chapterId: chapter._id,
           lessons: chapter.lessons.map((lesson) => ({ lessonId: lesson._id })),
@@ -114,6 +115,55 @@ exports.getSingleEnrollment = async (req, res, next) => {
   }
 };
 
+// exports.getSingleModule = async (req, res, next) => {
+//   try {
+//     const enrollment = await Enrollment.findById(req.params.id)
+//       .populate({
+//         path: "course.courseId",
+//         select: "-modules -status",
+//       })
+//       .populate({
+//         path: "module.moduleId",
+//         select: "-chapters -forum -status",
+//       })
+//       .populate({
+//         path: "module.forum.forumId",
+//         select: "-reply",
+//       })
+//       .populate({
+//         path: "module.chapter.chapterId",
+//         select: "-lessons -quizzes -status",
+//       })
+//       .populate({
+//         path: "module.chapter.lessons.lessonId",
+//         select: "-status",
+//       })
+//       .populate({
+//         path: "module.chapter.quizzes.quizId",
+//         select: "-status",
+//       })
+//       .populate("user");
+
+//     if (!enrollment) {
+//       return next(new ErrorHandler("Enrollment not found", 404));
+//     }
+//     const singleModule = enrollment.module.find((module) =>
+//       module._id.equals(req.params.moduleId)
+//     );
+
+//     if (!singleModule) {
+//       return next(new ErrorHandler("Module not found in this enrollment", 404));
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       module: singleModule,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 exports.getSingleModule = async (req, res, next) => {
   try {
     const enrollment = await Enrollment.findById(req.params.id)
@@ -146,6 +196,12 @@ exports.getSingleModule = async (req, res, next) => {
     if (!enrollment) {
       return next(new ErrorHandler("Enrollment not found", 404));
     }
+
+    const user = enrollment.user;
+    if (!user) {
+      return next(new ErrorHandler("User not found in this enrollment", 404));
+    }
+
     const singleModule = enrollment.module.find((module) =>
       module._id.equals(req.params.moduleId)
     );
@@ -153,6 +209,11 @@ exports.getSingleModule = async (req, res, next) => {
     if (!singleModule) {
       return next(new ErrorHandler("Module not found in this enrollment", 404));
     }
+
+    // Filter chapters based on the user's company
+    singleModule.chapter = singleModule.chapter.filter((chapter) => {
+      return chapter.chapterId.company === user.company;
+    });
 
     res.status(200).json({
       success: true,
