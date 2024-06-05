@@ -26,6 +26,69 @@ exports.newEnrollment = async (req, res, next) => {
   }
 };
 
+// exports.joinEnrollment = async (req, res, next) => {
+//   try {
+//     const { userId, courseId } = req.body;
+
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return next(new ErrorHandler("User not found", 404));
+//     }
+
+//     const course = await Course.findById(courseId).populate({
+//       path: "modules",
+//       populate: [
+//         {
+//           path: "chapters",
+//           populate: [{ path: "lessons" }, { path: "quizzes" }],
+//         },
+//         { path: "forum" },
+//       ],
+//     });
+//     if (!course) {
+//       return next(new ErrorHandler("Course not found", 404));
+//     }
+
+//     const enrollment = await Enrollment.findOne({
+//       user: userId,
+//       "course.courseId": courseId,
+//     });
+//     if (enrollment) {
+//       return next(
+//         new ErrorHandler("User is already enrolled in this course", 400)
+//       );
+//     }
+
+//     // Construct enrollment data
+//     const modules = course.modules.map((module) => {
+//       const moduleData = {
+//         moduleId: module._id,
+//         forum: module.forum.map((forum) => ({ forumId: forum._id })),
+//         chapter: module.chapters.map((chapter) => ({
+//           chapterId: chapter._id,
+//           lessons: chapter.lessons.map((lesson) => ({ lessonId: lesson._id })),
+//           quizzes: chapter.quizzes.map((quiz) => ({ quizId: quiz._id })),
+//         })),
+//       };
+//       return moduleData;
+//     });
+
+//     // Create enrollment
+//     await Enrollment.create({
+//       user: userId,
+//       course: [{ courseId: courseId }],
+//       module: modules,
+//     });
+
+//     res.status(201).json({
+//       success: true,
+//       message: "Enrollment created successfully",
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 exports.joinEnrollment = async (req, res, next) => {
   try {
     const { userId, courseId } = req.body;
@@ -59,12 +122,16 @@ exports.joinEnrollment = async (req, res, next) => {
       );
     }
 
-    // Construct enrollment data
+    // Filter chapters based on the user's company or no company
     const modules = course.modules.map((module) => {
+      const filteredChapters = module.chapters.filter(
+        (chapter) => !chapter.company || chapter.company === user.company
+      );
+
       const moduleData = {
         moduleId: module._id,
         forum: module.forum.map((forum) => ({ forumId: forum._id })),
-        chapter: module.chapters.map((chapter) => ({
+        chapter: filteredChapters.map((chapter) => ({
           chapterId: chapter._id,
           lessons: chapter.lessons.map((lesson) => ({ lessonId: lesson._id })),
           quizzes: chapter.quizzes.map((quiz) => ({ quizId: quiz._id })),
