@@ -21,8 +21,7 @@ exports.registerUser = async (req, res, next) => {
     }
   );
 
-  const { name, password, company, employee_id } = req.body;
-  const email = " ";
+  const { name, password, company, employee_id, email } = req.body;
   const user = await User.create({
     name,
     email,

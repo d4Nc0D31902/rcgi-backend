@@ -50,7 +50,7 @@ router.put(
 
 router
   .route("/admin/users")
-  .get(isAuthenticatedUser, authorizeRoles("admin"), allUsers);
+  .get(isAuthenticatedUser, authorizeRoles("admin", "hr"), allUsers);
 router
   .route("/admin/user/:id")
   .get(isAuthenticatedUser, authorizeRoles("admin"), getUserDetails)
@@ -62,7 +62,7 @@ router.get("/logout", logout);
 router.post(
   "/import-users",
   isAuthenticatedUser,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "hr"),
   upload.single("csvFile"),
   importUsers
 );
