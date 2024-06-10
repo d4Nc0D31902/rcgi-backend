@@ -13,12 +13,19 @@ exports.createForum = async (req, res) => {
 };
 
 // Get all forum posts
-exports.getAllForums = async (req, res) => {
+exports.getAllForums = async (req, res, next) => {
   try {
     const forums = await Forum.find().populate("reply.user", "name");
-    res.status(200).json(forums);
+
+    res.status(200).json({
+      success: true,
+      forums,
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+    });
   }
 };
 
@@ -87,7 +94,7 @@ exports.createReply = async (req, res, next) => {
     const newReply = {
       user: userId,
       reply,
-      createdAt: new Date(), 
+      createdAt: new Date(),
     };
 
     forum.reply.push(newReply);
