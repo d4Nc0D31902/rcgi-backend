@@ -112,3 +112,60 @@ exports.createReply = async (req, res, next) => {
     next(error);
   }
 };
+
+// Update Reply
+exports.updateReply = async (req, res, next) => {
+  try {
+    const { forumId, replyId } = req.params;
+    const { reply: updatedReply } = req.body;
+
+    const forum = await Forum.findById(forumId);
+    if (!forum) {
+      return res.status(404).json({ error: "Forum post not found" });
+    }
+
+    const existingReply = forum.reply.id(replyId);
+    if (!existingReply) {
+      return res.status(404).json({ error: "Reply not found" });
+    }
+
+    existingReply.reply = updatedReply;
+    await forum.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Reply updated successfully",
+      forum,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Delete Reply
+exports.deleteReply = async (req, res, next) => {
+  try {
+    const { forumId, replyId } = req.params;
+
+    const forum = await Forum.findById(forumId);
+    if (!forum) {
+      return res.status(404).json({ error: "Forum post not found" });
+    }
+
+    const existingReply = forum.reply.id(replyId);
+    if (!existingReply) {
+      return res.status(404).json({ error: "Reply not found" });
+    }
+
+    existingReply.remove();
+    await forum.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Reply deleted successfully",
+      forum,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
