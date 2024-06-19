@@ -1,4 +1,5 @@
 const express = require("express");
+const compression = require("compression");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -29,6 +30,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
+app.use(compression());
 
 app.use("/api/v1", products);
 app.use("/api/v1", auth);
