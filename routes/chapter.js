@@ -9,7 +9,8 @@ const {
   deleteChapter,
   addLesson,
   addQuiz,
-  markAsDone, 
+  markAsDone,
+  reorderChapterItems,
 } = require("../controllers/chapterController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -49,10 +50,13 @@ router.post(
   addQuiz
 );
 
+router.put("/chapter/:id/markAsDone", isAuthenticatedUser, markAsDone);
+
 router.put(
-  "/chapter/:id/markAsDone",
+  "/admin/chapter/:id/reorder",
   isAuthenticatedUser,
-  markAsDone
+  authorizeRoles("admin"),
+  reorderChapterItems
 );
 
 module.exports = router;

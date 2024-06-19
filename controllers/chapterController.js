@@ -138,3 +138,31 @@ exports.addQuiz = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.reorderChapterItems = async (req, res, next) => {
+  try {
+    const { lessonsOrder, quizzesOrder } = req.body;
+    const chapter = await Chapter.findById(req.params.id);
+
+    if (!chapter) {
+      return next(new ErrorHandler("Chapter not found", 404));
+    }
+
+    if (lessonsOrder) {
+      chapter.lessons = lessonsOrder;
+    }
+
+    if (quizzesOrder) {
+      chapter.quizzes = quizzesOrder;
+    }
+
+    await chapter.save();
+
+    res.status(200).json({
+      success: true,
+      chapter,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

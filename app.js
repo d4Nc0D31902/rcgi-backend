@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+require("dotenv").config({ path: "./config/.env" });
 
 const products = require("./routes/product");
 const auth = require("./routes/auth");
@@ -21,9 +22,8 @@ app.use(express.json({ limit: "100mb" }));
 // app.set("trust proxy", 1);
 app.use(
   cors({
-    // origin:  "http://localhost:3000",
-      origin: "https://rcgi-frontend.vercel.app",
-    // origin: "https://rcgi-frontend.onrender.com",
+    // origin: process.env.LOCAL_API,
+    origin: process.env.VERCEL_API,
     credentials: true,
   })
 );
