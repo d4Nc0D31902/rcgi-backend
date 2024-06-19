@@ -19,6 +19,8 @@ const notification = require("./routes/notification");
 const forum = require("./routes/forum");
 
 const errorMiddleware = require("./middlewares/errors");
+
+app.use(compression());
 app.use(express.json({ limit: "100mb" }));
 // app.set("trust proxy", 1);
 app.use(
@@ -31,7 +33,6 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
-app.use(compression());
 
 app.use("/api/v1", products);
 app.use("/api/v1", auth);
