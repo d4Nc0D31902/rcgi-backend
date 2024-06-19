@@ -18,9 +18,20 @@ const {
   updateUser,
   deleteUser,
   deactivateUser,
+  addUser,
   reactivateUser,
 } = require("../controllers/authController");
+
 router.post("/register", upload.single("avatar"), registerUser);
+
+router.post(
+  "/addUser",
+  upload.single("avatar"),
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  addUser
+);
+
 router.post("/login", loginUser);
 
 router.post("/password/forgot", forgotPassword);

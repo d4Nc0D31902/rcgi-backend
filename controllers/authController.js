@@ -36,6 +36,39 @@ exports.registerUser = async (req, res, next) => {
   sendToken(user, 200, res);
 };
 
+exports.addUser = async (req, res, next) => {
+  const result = await cloudinary.uploader.upload(
+    req.body.avatar,
+    {
+      folder: "avatars",
+      width: 150,
+      crop: "scale",
+    },
+    (err, res) => {
+      console.log(err, res);
+    }
+  );
+
+  const { name, password, company, employee_id, email } = req.body;
+  const user = await User.create({
+    name,
+    email,
+    password,
+    company,
+    employee_id,
+    avatar: {
+      public_id: result.public_id,
+      url: result.secure_url,
+    },
+  });
+  // sendToken(user, 200, res);
+
+  res.status(200).json({
+    success: true,
+    message: "Registrattion Success!",
+  });
+};
+
 exports.loginUser = async (req, res, next) => {
   const { employee_id, password } = req.body;
 
