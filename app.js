@@ -33,7 +33,7 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: "100mb" }));
+app.use(express.json({ limit: "10mb" })); // Reduce the limit if possible
 // app.set("trust proxy", 1);
 app.use(
   cors({
@@ -44,7 +44,25 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use(express.urlencoded({ limit: "100mb", extended: true }));
+app.use(express.urlencoded({ limit: "10mb", extended: true })); // Reduce the limit if possible
+
+// Ensure to handle large responses efficiently
+const sendLargeResponse = (res, data) => {
+  const chunkSize = 1024 * 1024; // 1MB chunks
+  let start = 0;
+  let end = chunkSize;
+
+  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Transfer-Encoding", "chunked");
+
+  while (start < data.length) {
+    const chunk = data.slice(start, end);
+    res.write(JSON.stringify(chunk));
+    start = end;
+    end = start + chunkSize;
+  }
+  res.end();
+};
 
 app.use("/api/v1", products);
 app.use("/api/v1", auth);
