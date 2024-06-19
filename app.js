@@ -20,7 +20,19 @@ const forum = require("./routes/forum");
 
 const errorMiddleware = require("./middlewares/errors");
 
-app.use(compression());
+app.use(
+  compression({
+    level: 6,
+    threshold: 100 * 1000,
+    filter: (req, res) => {
+      if (req.headers["x-no-compression"]) {
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+  })
+);
+
 app.use(express.json({ limit: "100mb" }));
 // app.set("trust proxy", 1);
 app.use(
