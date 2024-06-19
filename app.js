@@ -38,8 +38,8 @@ app.use(express.json({ limit: "100mb" }));
 app.use(
   cors({
     // origin: process.env.LOCAL_API,
-    // origin: process.env.RENDER_API,
-    origin: process.env.VERCEL_API,
+    origin: process.env.RENDER_API,
+    // origin: process.env.VERCEL_API,
     credentials: true,
   })
 );
