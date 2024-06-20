@@ -49,7 +49,7 @@ const server = http.createServer(app);
 
 const io = socketIo(server, {
   cors: {
-    // origin: "http://localhost:3000",
+    // origin: process.env.LOCAL_API,
     origin: process.env.RENDER_API,
     credentials: true,
   },

@@ -122,10 +122,11 @@ exports.joinEnrollment = async (req, res, next) => {
       );
     }
 
-    // Filter chapters based on the user's company or no company
+    // Filter chapters based on the user's company or no company FIX THIS SHIT
     const modules = course.modules.map((module) => {
       const filteredChapters = module.chapters.filter(
-        (chapter) => !chapter.company || chapter.company === user.company
+        (chapter) =>
+          chapter.company === "None" || chapter.company === user.company
       );
 
       const moduleData = {

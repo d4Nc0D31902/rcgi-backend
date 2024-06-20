@@ -33,17 +33,6 @@ exports.newModule = async (req, res, next) => {
   });
 };
 
-// exports.getSingleModule = async (req, res, next) => {
-//   const module = await Module.findById(req.params.id);
-//   if (!module) {
-//     return next(new ErrorHandler("Module not found", 404));
-//   }
-//   res.status(200).json({
-//     success: true,
-//     module,
-//   });
-// };
-
 exports.getSingleModule = async (req, res, next) => {
   try {
     const module = await Module.findById(req.params.id)
@@ -161,4 +150,28 @@ exports.getModules = async (req, res, next) => {
     success: true,
     modules,
   });
+};
+
+exports.reorderModuleChapters = async (req, res, next) => {
+  try {
+    const { chaptersOrder } = req.body;
+    const module = await Module.findById(req.params.id);
+
+    if (!module) {
+      return next(new ErrorHandler("Module not found", 404));
+    }
+
+    if (chaptersOrder) {
+      module.chapters = chaptersOrder;
+    }
+
+    await module.save();
+
+    res.status(200).json({
+      success: true,
+      module,
+    });
+  } catch (error) {
+    next(error);
+  }
 };

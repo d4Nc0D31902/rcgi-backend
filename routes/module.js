@@ -10,6 +10,7 @@ const {
   deleteModule,
   addChapter,
   addForum,
+  reorderModuleChapters,
 } = require("../controllers/moduleController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -46,6 +47,13 @@ router.post(
   isAuthenticatedUser,
   authorizeRoles("admin"),
   addForum
+);
+
+router.put(
+  "/admin/module/:id/reorder",
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  reorderModuleChapters
 );
 
 module.exports = router;
