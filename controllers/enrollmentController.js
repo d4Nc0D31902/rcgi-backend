@@ -768,10 +768,9 @@ exports.checkProgress = async (req, res, next) => {
     next(error);
   }
 };
-
 exports.forumCreateReply = async (req, res, next) => {
   try {
-    const { forumId } = req.params;
+    const { forumId, enrollmentId, moduleId } = req.params;
     const { reply } = req.body;
     const userId = req.user._id;
 
@@ -796,10 +795,7 @@ exports.forumCreateReply = async (req, res, next) => {
 
     console.log("Reply added successfully");
 
-    // Update forum status to "Done" in the enrollment model
-    const enrollment = await Enrollment.findOne({
-      "module.forum.forumId": forumId,
-    });
+    const enrollment = await Enrollment.findById(enrollmentId);
     if (!enrollment) {
       console.log("Enrollment not found");
       return next(new ErrorHandler("Enrollment not found", 404));
@@ -807,12 +803,17 @@ exports.forumCreateReply = async (req, res, next) => {
 
     let forumUpdated = false;
     enrollment.module.forEach((module) => {
-      module.forum.forEach((forum) => {
-        if (forum.forumId.equals(forumId)) {
-          forum.status = "Done";
-          forumUpdated = true;
-        }
-      });
+      if (module._id.equals(moduleId)) {
+        module.forum.forEach((forum) => {
+          if (forum.forumId.equals(forumId)) {
+            console.log(
+              `Updating forum status to Done for forum ID: ${forumId}`
+            );
+            forum.status = "Done";
+            forumUpdated = true;
+          }
+        });
+      }
     });
 
     if (forumUpdated) {

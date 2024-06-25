@@ -20,7 +20,7 @@ const {
   createSubmit,
   createRetake,
   checkProgress,
-  forumCreateReply, // Import the forumCreateReply controller
+  forumCreateReply,
 } = require("../controllers/enrollmentController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -93,6 +93,9 @@ router.post(
 
 router.get("/enrollment/:id/progress", isAuthenticatedUser, checkProgress);
 
-router.post("/forum/:forumId/reply", isAuthenticatedUser, forumCreateReply);
-
+router.post(
+  "/enrollment/:enrollmentId/module/:moduleId/forum/:forumId/reply",
+  isAuthenticatedUser,
+  forumCreateReply
+);
 module.exports = router;
