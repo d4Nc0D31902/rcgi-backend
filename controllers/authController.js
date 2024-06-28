@@ -190,42 +190,52 @@ exports.updatePassword = async (req, res, next) => {
 };
 
 exports.updateProfile = async (req, res, next) => {
-  const newUserData = {
-    name: req.body.name,
-    email: req.body.email,
-  };
-  // Update avatar
-  if (req.body.avatar !== "") {
-    const user = await User.findById(req.user.id);
-    const image_id = user.avatar.public_id;
-    const res = await cloudinary.uploader.destroy(image_id);
-    const result = await cloudinary.uploader.upload(
-      req.body.avatar,
-      {
+  try {
+    const newUserData = {
+      name: req.body.name,
+      email: req.body.email,
+    };
+
+    // Update avatar if provided
+    if (req.body.avatar) {
+      const user = await User.findById(req.user.id);
+
+      // If user has an existing avatar, delete it from Cloudinary
+      if (user.avatar && user.avatar.public_id) {
+        await cloudinary.uploader.destroy(user.avatar.public_id);
+      }
+
+      // Upload new avatar to Cloudinary
+      const result = await cloudinary.uploader.upload(req.body.avatar, {
         folder: "avatars",
         width: 150,
         crop: "scale",
-      },
-      (err, res) => {
-        console.log(err, res);
-      }
-    );
+      });
 
-    newUserData.avatar = {
-      public_id: result.public_id,
-      url: result.secure_url,
-    };
+      newUserData.avatar = {
+        public_id: result.public_id,
+        url: result.secure_url,
+      };
+    }
+
+    // Update user information
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, newUserData, {
+      new: true, // Return updated user
+      runValidators: true, // Run schema validators
+    });
+
+    res.status(200).json({
+      success: true,
+      data: updatedUser,
+    });
+  } catch (err) {
+    // Handle errors
+    console.error("Error updating profile:", err);
+    res.status(500).json({
+      success: false,
+      error: "Server error",
+    });
   }
-
-  const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
-    new: true,
-
-    runValidators: true,
-  });
-
-  res.status(200).json({
-    success: true,
-  });
 };
 
 exports.allUsers = async (req, res, next) => {
