@@ -9,57 +9,59 @@ const csv = require("csvtojson");
 const xlsx = require("xlsx");
 
 exports.registerUser = async (req, res, next) => {
-  const result = await cloudinary.uploader.upload(
-    req.body.avatar,
-    {
-      folder: "avatars",
-      width: 150,
-      crop: "scale",
-    },
-    (err, res) => {
-      console.log(err, res);
-    }
-  );
+  // const result = await cloudinary.uploader.upload(
+  //   req.body.avatar,
+  //   {
+  //     folder: "avatars",
+  //     width: 150,
+  //     crop: "scale",
+  //   },
+  //   (err, res) => {
+  //     console.log(err, res);
+  //   }
+  // );
 
-  const { name, password, company, employee_id, email } = req.body;
+  const { name, password, company, employee_id, email, branch } = req.body;
   const user = await User.create({
     name,
     email,
     password,
     company,
+    branch,
     employee_id,
-    avatar: {
-      public_id: result.public_id,
-      url: result.secure_url,
-    },
+    // avatar: {
+    //   public_id: result.public_id,
+    //   url: result.secure_url,
+    // },
   });
   sendToken(user, 200, res);
 };
 
 exports.addUser = async (req, res, next) => {
-  const result = await cloudinary.uploader.upload(
-    req.body.avatar,
-    {
-      folder: "avatars",
-      width: 150,
-      crop: "scale",
-    },
-    (err, res) => {
-      console.log(err, res);
-    }
-  );
+  // const result = await cloudinary.uploader.upload(
+  //   req.body.avatar,
+  //   {
+  //     folder: "avatars",
+  //     width: 150,
+  //     crop: "scale",
+  //   },
+  //   (err, res) => {
+  //     console.log(err, res);
+  //   }
+  // );
 
-  const { name, password, company, employee_id, email } = req.body;
+  const { name, password, company, employee_id, email , branch} = req.body;
   const user = await User.create({
     name,
     email,
     password,
     company,
+    branch,
     employee_id,
-    avatar: {
-      public_id: result.public_id,
-      url: result.secure_url,
-    },
+    // avatar: {
+    //   public_id: result.public_id,
+    //   url: result.secure_url,
+    // },
   });
   // sendToken(user, 200, res);
 
